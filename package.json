@@ -12,7 +12,7 @@
     "url": "https://github.com/ezzygemini/ezzy-storage.git"
   },
   "scripts": {
-    "test": "node node_modules/ezzy-testing"
+    "test": "node node_modules/ezzy-testing/coverage"
   },
   "license": "MIT",
   "dependencies": {
