@@ -1,0 +1,25 @@
+{
+  "name": "ezzy-storage",
+  "description": "A light method to store data in browsers and node",
+  "version": "0.1.0",
+  "author": {
+    "name": "Moises Romero",
+    "url": "http://ezzygemini.com",
+    "email": "ezzygemini@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ezzygemini/ezzy-storage.git"
+  },
+  "scripts": {
+    "test": "node node_modules/ezzy-testing"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "ezzy-cache": "^0.1.18",
+    "ezzy-logger": "^0.1.15"
+  },
+  "devDependencies": {
+    "ezzy-testing": "^0.1.10"
+  }
+}
