@@ -46,7 +46,7 @@ describe('Storage', () => {
       };
       const storage = new LocalStorage(win);
       storage.set('test', 123);
-      const val = JSON.stringify({test:123});
+      const val = JSON.stringify({test: 123});
       expect(win.localStorage.getItem).toHaveBeenCalledTimes(1);
       expect(win.localStorage.setItem).toHaveBeenCalledWith(CACHE_KEY, val);
       storage.flush();
@@ -56,23 +56,26 @@ describe('Storage', () => {
 
     it('should properly obtain a local storage', done => {
       class Doc {
-        constructor(){
+        constructor() {
           this._val = '';
         }
-        get cookie(){
+
+        get cookie() {
           return this._val;
         }
-        set cookie(val){
+
+        set cookie(val) {
           this._val = val;
         }
       }
+
       const doc = new Doc();
-      const win = {document:doc};
+      const win = {document: doc};
       const getSpy = spyOnProperty(doc, 'cookie', 'get').and.callThrough();
       const setSpy = spyOnProperty(doc, 'cookie', 'set').and.callThrough();
       const storage = new CookieStorage(win);
       storage.set('test', 123);
-      const cookieVal = encodeURIComponent(JSON.stringify({test:123}));
+      const cookieVal = encodeURIComponent(JSON.stringify({test: 123}));
       expect(getSpy).toHaveBeenCalledTimes(1);
       let reg = new RegExp(`^${CACHE_KEY}=${cookieVal}; expires=.*; path=/$`);
       expect(setSpy.calls.mostRecent().args[0]).toMatch(reg);
