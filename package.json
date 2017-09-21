@@ -20,8 +20,8 @@
   },
   "license": "MIT",
   "dependencies": {
-    "ezzy-cache": "^0.1.23",
-    "ezzy-logger": "^0.1.21"
+    "ezzy-cache": "^0.1.24",
+    "ezzy-logger": "^0.1.22"
   },
   "devDependencies": {
     "ezzy-testing": "^0.1.21"
