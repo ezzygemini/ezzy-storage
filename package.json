@@ -1,7 +1,7 @@
 {
   "name": "ezzy-storage",
   "description": "A light method to store data in browsers and node",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "author": {
     "name": "Moises Romero",
     "url": "http://ezzygemini.com",
