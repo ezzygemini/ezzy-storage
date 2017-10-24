@@ -33,6 +33,10 @@ describe('Storage', () => {
       expect(storage.get('test')).toBe(123);
       storage.flush();
       expect(storage.get('test')).toBe(undefined);
+      storage.set('test', 1234);
+      expect(storage.get('test')).toBe(1234);
+      storage.delete('test');
+      expect(storage.get('test')).toBe(undefined);
       done();
     });
 

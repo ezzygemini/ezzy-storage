@@ -31,6 +31,16 @@ class LocalStorage {
   }
 
   /**
+   * Stores a value.
+   * @param {string} key The key of the stored data.
+   */
+  delete(key) {
+    const newStorage = this.storage;
+    delete newStorage[key];
+    this.storage = newStorage;
+  }
+
+  /**
    * Flushes the storage.
    * @returns {boolean}
    */

@@ -32,6 +32,14 @@ class MemoryStorage {
   }
 
   /**
+   * Deletes a value in the cache.
+   * @param {string} key The name of the key.
+   */
+  delete(key) {
+    this._cache.getLibrary(CACHE_KEY).remove(key);
+  }
+
+  /**
    * Flushes the cache library.
    */
   flush() {

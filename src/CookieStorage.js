@@ -8,7 +8,7 @@ class CookieStorage {
   /**
    * Constructor.
    */
-  constructor(win){
+  constructor(win) {
     this._win = win;
   }
 
@@ -17,7 +17,7 @@ class CookieStorage {
    * @param {string} key The name of the cookie value.
    * @param {*} val The value of the storage object.
    */
-  set(key, val) {
+  set (key, val) {
     this.storage = Object.assign(this.storage, {[key]: val});
   }
 
@@ -26,8 +26,19 @@ class CookieStorage {
    * @param {string} key The name of the key.
    * @returns {*}
    */
-  get(key) {
+  get (key) {
     return this.storage[key];
+  }
+
+  /**
+   * Deletes the value of the cookie storage object.
+   * @param {string} key The name of the key.
+   * @returns {*}
+   */
+  delete(key) {
+    const newStorage = this.storage;
+    delete newStorage[key];
+    return this.storage = newStorage;
   }
 
   /**

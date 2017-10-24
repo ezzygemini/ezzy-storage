@@ -58,6 +58,15 @@ class Storage {
   }
 
   /**
+   * Deletes a storage by its key.
+   * @param {*} args The arguments passed to the storage.
+   * @returns {*}
+   */
+  delete(...args) {
+    return this._storage.delete(...args);
+  }
+
+  /**
    * Flushes the storage.
    * @returns {*}
    */
