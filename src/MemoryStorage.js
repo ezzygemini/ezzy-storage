@@ -1,5 +1,4 @@
 const CACHE_KEY = require('../package.json').name;
-const Cache = require('ezzy-cache');
 
 /**
  * Memory Storage
@@ -10,6 +9,7 @@ class MemoryStorage {
    * Constructor
    */
   constructor() {
+    const Cache = require('ezzy-cache');
     this._cache = new Cache();
   }
 
