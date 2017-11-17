@@ -41,20 +41,39 @@ describe('Storage', () => {
     });
 
     it('should properly obtain a local storage', done => {
+      const val = JSON.stringify({value: 123, date: Date.now(), version: '1'});
       const win = {
         localStorage: {
-          getItem: jasmine.createSpy(),
+          [`${CACHE_KEY}:test`]: val,
+          getItem: jasmine.createSpy().and.returnValue(val),
           setItem: jasmine.createSpy(),
           removeItem: jasmine.createSpy()
         }
       };
       const storage = new LocalStorage(win);
       storage.set('test', 123);
-      const val = JSON.stringify({test: 123});
-      expect(win.localStorage.getItem).toHaveBeenCalledTimes(1);
-      expect(win.localStorage.setItem).toHaveBeenCalledWith(CACHE_KEY, val);
+      expect(win.localStorage.getItem).toHaveBeenCalledTimes(0);
+      expect(win.localStorage.setItem)
+        .toHaveBeenCalledWith(CACHE_KEY + ':test', jasmine.any(String));
+      expect(storage.getRaw('test')).toEqual(jasmine.objectContaining({
+        value: 123,
+        date: jasmine.any(Number),
+        version: jasmine.any(String)
+      }));
+      expect(storage.get('test')).toBe(123);
+      expect(storage.hasValidVersion('test', '1')).toBe(true);
+      expect(storage.hasValidVersion('test', '2')).toBe(false);
+      expect(storage.hasValidVersion('test')).toBe(false);
+      storage.flushOlderThan(new Date(Date.now() + 100000));
+      expect(win.localStorage.removeItem.calls.count()).toEqual(0);
+      storage.flushOlderThan(new Date(Date.now() - 100000));
+      expect(win.localStorage.removeItem.calls.count()).toEqual(1);
+      storage.flushOldVersions();
+      expect(win.localStorage.removeItem.calls.count()).toEqual(2);
       storage.flush();
-      expect(win.localStorage.removeItem).toHaveBeenCalledWith(CACHE_KEY);
+      expect(win.localStorage.removeItem.calls.count()).toEqual(3);
+      expect(win.localStorage.removeItem)
+        .toHaveBeenCalledWith(CACHE_KEY + ':test');
       done();
     });
 
@@ -79,7 +98,13 @@ describe('Storage', () => {
       const setSpy = spyOnProperty(doc, 'cookie', 'set').and.callThrough();
       const storage = new CookieStorage(win);
       storage.set('test', 123);
-      const cookieVal = encodeURIComponent(JSON.stringify({test: 123}));
+      const cookieVal = encodeURIComponent(JSON.stringify({
+        test: {
+          val: 123,
+          d: 909090909,
+          v: '__version__'
+        }
+      })).replace('__version__', '.*').replace('909090909', '\\d+');
       expect(getSpy).toHaveBeenCalledTimes(1);
       let reg = new RegExp(`^${CACHE_KEY}=${cookieVal}; expires=.*; path=/$`);
       expect(setSpy.calls.mostRecent().args[0]).toMatch(reg);

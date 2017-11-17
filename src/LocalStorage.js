@@ -1,4 +1,7 @@
 const STORAGE_KEY = require('../package.json').name;
+const PREFIX = `${STORAGE_KEY}:`;
+const REG = new RegExp(`^${STORAGE_KEY}:.*`);
+const {version} = require('./package');
 
 /**
  * Local Storage
@@ -8,8 +11,16 @@ class LocalStorage {
   /**
    * Constructor.
    */
-  constructor(win){
+  constructor(win) {
     this._win = win;
+  }
+
+  /**
+   * Gets the local storage.
+   * @return {Storage}
+   */
+  get ls() {
+    return this._win.localStorage;
   }
 
   /**
@@ -17,17 +28,46 @@ class LocalStorage {
    * @param {string} key
    * @returns {*}
    */
-  get(key) {
-    return this.storage[key];
+  get (key) {
+    const item = this.ls.getItem(`${PREFIX}${key}`);
+    if (!item) {
+      return;
+    }
+    return JSON.parse(item).value;
+  }
+
+  /**
+   * Gets the raw stored value.
+   * @param {string} key
+   * @returns {*}
+   */
+  getRaw(key) {
+    const item = this.ls.getItem(`${PREFIX}${key}`);
+    if (!item) {
+      return;
+    }
+    return JSON.parse(item);
+  }
+
+  /**
+   * Checks if the entry has a valid version.
+   * @param {string} key The entry key.
+   * @param {string} ver The optionsl version to check, otherwsie checks package
+   * @return {boolean}
+   */
+  hasValidVersion(key, ver) {
+    ver = ver || version;
+    return (this.getRaw(key) || {}).version === ver;
   }
 
   /**
    * Stores a value.
    * @param {string} key The key of the stored data.
-   * @param {*} val The value of the stored data.
+   * @param {*} value The value of the stored data.
    */
-  set(key, val) {
-    this.storage = Object.assign(this.storage, {[key]: val});
+  set (key, value) {
+    const date = Date.now();
+    this.ls.setItem(`${PREFIX}${key}`, JSON.stringify({value, date, version}));
   }
 
   /**
@@ -35,9 +75,7 @@ class LocalStorage {
    * @param {string} key The key of the stored data.
    */
   delete(key) {
-    const newStorage = this.storage;
-    delete newStorage[key];
-    this.storage = newStorage;
+    this.ls.removeItem(`${PREFIX}${key}`);
   }
 
   /**
@@ -45,29 +83,50 @@ class LocalStorage {
    * @returns {boolean}
    */
   flush() {
-    this._win.localStorage.removeItem(STORAGE_KEY);
+    for (let key of Object.keys(this.ls)) {
+      if (REG.test(key)) {
+        this.ls.removeItem(key);
+      }
+    }
     return true;
   }
 
   /**
-   * Gets the local storage value.
-   * @returns {Object}
+   * Flush keys with an older version.
    */
-  get storage() {
-    const raw = this._win.localStorage.getItem(STORAGE_KEY) || '{}';
-    try {
-      return JSON.parse(raw);
-    } catch (e) {
-      return {};
+  flushOldVersions() {
+    for (let key of Object.keys(this.ls)) {
+      if (REG.test(key)) {
+        try {
+          if (version === JSON.parse(this.ls.getItem(key)).version) {
+            continue;
+          }
+        } catch (e) {
+          // we couldn't verify the version
+        }
+        this.ls.removeItem(key);
+      }
     }
   }
 
   /**
-   * Sets the value of the storage.
-   * @param {Object} value The value of the storage.
+   * Flush keys older than a specific date.
+   * @param {Date} date The maximum date of when to keep items.
    */
-  set storage(value) {
-    this._win.localStorage.setItem(STORAGE_KEY, JSON.stringify(value));
+  flushOlderThan(date) {
+    const ts = date.getTime();
+    for (let key of Object.keys(this.ls)) {
+      if (REG.test(key)) {
+        try {
+          if (ts > JSON.parse(this.ls.getItem(key)).date) {
+            continue;
+          }
+        } catch (e) {
+          // we couldn't verify the date
+        }
+        this.ls.removeItem(key);
+      }
+    }
   }
 
 }

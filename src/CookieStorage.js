@@ -1,4 +1,5 @@
 const COOKIE_NAME = require('../package.json').name;
+const {version} = require('./package');
 
 /**
  * Cookie Storage
@@ -15,10 +16,17 @@ class CookieStorage {
   /**
    * Sets the value of the cookie.
    * @param {string} key The name of the cookie value.
-   * @param {*} val The value of the storage object.
+   * @param {*} value The value of the storage object.
    */
-  set (key, val) {
-    this.storage = Object.assign(this.storage, {[key]: val});
+  set (key, value) {
+    const date = Date.now();
+    this.storage = Object.assign(this.storage, {
+      [key]: {
+        val: value,
+        d: date,
+        v: version
+      }
+    });
   }
 
   /**
@@ -27,7 +35,30 @@ class CookieStorage {
    * @returns {*}
    */
   get (key) {
+    const item = this.storage[key];
+    if (!item) {
+      return;
+    }
+    return item.val;
+  }
+
+  /**
+   * Gets the raw value of the cookie storage object.
+   * @return {*}
+   */
+  getRaw() {
     return this.storage[key];
+  }
+
+  /**
+   * Checks if the entry has a valid version.
+   * @param {string} key The entry key.
+   * @param {string} ver The optionsl version to check, otherwsie checks package
+   * @return {boolean}
+   */
+  hasValidVersion(key, ver) {
+    ver = ver || version;
+    return (this.getRaw(key) || {}).v === ver;
   }
 
   /**
@@ -48,6 +79,44 @@ class CookieStorage {
   flush() {
     this.eraseCookie(COOKIE_NAME);
     return true;
+  }
+
+  /**
+   * Flush keys with an older version.
+   */
+  flushOldVersions() {
+    const cookieVal = this.storage;
+    const newVal = {};
+    for (let key of Object.keys(cookieVal)) {
+      try {
+        if (version === cookieVal(key).version) {
+          newVal[key] = cookieVal[key];
+        }
+      } catch (e) {
+        // we couldn't verify the date
+      }
+    }
+    this.storage = cookieVal;
+  }
+
+  /**
+   * Flush keys older than a specific date.
+   * @param {Date} date The maximum date of when to keep items.
+   */
+  flushOlderThan(date) {
+    const cookieVal = this.storage;
+    const newVal = {};
+    const ts = date.getTime();
+    for (let key of Object.keys(cookieVal)) {
+      try {
+        if (ts > cookieVal(key).date) {
+          newVal[key] = cookieVal[key];
+        }
+      } catch (e) {
+        // we couldn't verify the date
+      }
+    }
+    this.storage = cookieVal;
   }
 
   /**
