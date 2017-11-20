@@ -1,6 +1,5 @@
 const STORAGE_KEY = require('../package.json').name;
 const PREFIX = `${STORAGE_KEY}:`;
-const REG = new RegExp(`^${STORAGE_KEY}:.*`);
 const {version} = require('./package');
 
 /**
@@ -14,6 +13,7 @@ class LocalStorage {
   constructor(win, prefix) {
     this._win = win;
     this._prefix = PREFIX + (prefix || '') + (prefix ? ':' : '');
+    this._reg = new RegExp(`^${this._prefix}.*`);
   }
 
   /**
@@ -86,7 +86,7 @@ class LocalStorage {
    */
   flush() {
     for (let key of Object.keys(this.ls)) {
-      if (REG.test(key)) {
+      if (this._reg.test(key)) {
         this.ls.removeItem(key);
       }
     }
@@ -98,7 +98,7 @@ class LocalStorage {
    */
   flushOldVersions() {
     for (let key of Object.keys(this.ls)) {
-      if (REG.test(key)) {
+      if (this._reg.test(key)) {
         try {
           if (version === JSON.parse(this.ls.getItem(key)).version) {
             continue;
@@ -118,7 +118,7 @@ class LocalStorage {
   flushOlderThan(date) {
     const ts = date.getTime();
     for (let key of Object.keys(this.ls)) {
-      if (REG.test(key)) {
+      if (this._reg.test(key)) {
         try {
           if (ts > JSON.parse(this.ls.getItem(key)).date) {
             continue;
