@@ -13,9 +13,7 @@
   },
   "scripts": {
     "coverage": "node node_modules/ezzy-testing/coverage",
-    "pretest": "npm install",
     "test": "node node_modules/ezzy-testing",
-    "prebuild": "npm install",
     "build": "npm run coverage"
   },
   "license": "MIT",

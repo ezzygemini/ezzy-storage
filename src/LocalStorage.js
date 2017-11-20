@@ -11,8 +11,9 @@ class LocalStorage {
   /**
    * Constructor.
    */
-  constructor(win) {
+  constructor(win, prefix) {
     this._win = win;
+    this._prefix = PREFIX + (prefix || '') + (prefix ? ':' : '');
   }
 
   /**
@@ -29,7 +30,7 @@ class LocalStorage {
    * @returns {*}
    */
   get (key) {
-    const item = this.ls.getItem(`${PREFIX}${key}`);
+    const item = this.ls.getItem(`${this._prefix}${key}`);
     if (!item) {
       return;
     }
@@ -42,7 +43,7 @@ class LocalStorage {
    * @returns {*}
    */
   getRaw(key) {
-    const item = this.ls.getItem(`${PREFIX}${key}`);
+    const item = this.ls.getItem(`${this._prefix}${key}`);
     if (!item) {
       return;
     }
@@ -67,7 +68,8 @@ class LocalStorage {
    */
   set (key, value) {
     const date = Date.now();
-    this.ls.setItem(`${PREFIX}${key}`, JSON.stringify({value, date, version}));
+    this.ls
+      .setItem(`${this._prefix}${key}`, JSON.stringify({value, date, version}));
   }
 
   /**
@@ -75,7 +77,7 @@ class LocalStorage {
    * @param {string} key The key of the stored data.
    */
   delete(key) {
-    this.ls.removeItem(`${PREFIX}${key}`);
+    this.ls.removeItem(`${this._prefix}${key}`);
   }
 
   /**

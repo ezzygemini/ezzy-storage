@@ -6,8 +6,9 @@ class Storage {
   /**
    * Constructor.
    * @param {*} win The window object.
+   * @param {string} prefix The prefix to separate scopes.
    */
-  constructor(win) {
+  constructor(win, prefix) {
 
     let type;
     if (win) {
@@ -36,7 +37,7 @@ class Storage {
     /**
      * @type {MemoryStorage|LocalStorage|CookieStorage}
      */
-    this._storage = new InternalStorage(win);
+    this._storage = new InternalStorage(win, prefix);
   }
 
   /**

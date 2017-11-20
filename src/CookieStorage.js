@@ -9,8 +9,9 @@ class CookieStorage {
   /**
    * Constructor.
    */
-  constructor(win) {
+  constructor(win, prefix) {
     this._win = win;
+    this._cookie = COOKIE_NAME + (prefix || '');
   }
 
   /**
@@ -77,7 +78,7 @@ class CookieStorage {
    * @returns {boolean}
    */
   flush() {
-    this.eraseCookie(COOKIE_NAME);
+    this.eraseCookie(this._cookie);
     return true;
   }
 
@@ -124,7 +125,7 @@ class CookieStorage {
    * @returns {Object}
    */
   get storage() {
-    const value = this.readCookie(COOKIE_NAME) || '{}';
+    const value = this.readCookie(this._cookie) || '{}';
     try {
       if (value) {
         return JSON.parse(decodeURIComponent(value));
@@ -142,7 +143,7 @@ class CookieStorage {
    */
   set storage(value) {
     value = encodeURIComponent(JSON.stringify(value));
-    this.createCookie(COOKIE_NAME, value, 360);
+    this.createCookie(this._cookie, value, 360);
   }
 
   /**
