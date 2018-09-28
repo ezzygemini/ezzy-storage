@@ -1,18 +1,16 @@
-const STORAGE_KEY = require('../package.json').name;
-const PREFIX = `${STORAGE_KEY}:`;
-const {version} = require('./package');
+const { version, name: STORAGE_KEY } = require("./package");
+const PREFIX = STORAGE_KEY ? `${STORAGE_KEY}:` : '';
 
 /**
  * Local Storage
  */
 class LocalStorage {
-
   /**
    * Constructor.
    */
   constructor(win, prefix) {
     this._win = win;
-    this._prefix = PREFIX + (prefix || '') + (prefix ? ':' : '');
+    this._prefix = PREFIX + (prefix || "") + (prefix ? ":" : "");
     this._reg = new RegExp(`^${this._prefix}.*`);
   }
 
@@ -29,7 +27,7 @@ class LocalStorage {
    * @param {string} key
    * @returns {*}
    */
-  get (key) {
+  get(key) {
     const item = this.ls.getItem(`${this._prefix}${key}`);
     if (!item) {
       return;
@@ -66,10 +64,12 @@ class LocalStorage {
    * @param {string} key The key of the stored data.
    * @param {*} value The value of the stored data.
    */
-  set (key, value) {
+  set(key, value) {
     const date = Date.now();
-    this.ls
-      .setItem(`${this._prefix}${key}`, JSON.stringify({value, date, version}));
+    this.ls.setItem(
+      `${this._prefix}${key}`,
+      JSON.stringify({ value, date, version })
+    );
   }
 
   /**
@@ -130,7 +130,6 @@ class LocalStorage {
       }
     }
   }
-
 }
 
 module.exports = LocalStorage;

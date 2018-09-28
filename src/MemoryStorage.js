@@ -1,16 +1,15 @@
-const CACHE_KEY = require('../package.json').name;
-const {version} = require('./package');
+const CACHE_KEY = require("../package.json").name;
+const { version } = require("./package");
 
 /**
  * Memory Storage
  */
 class MemoryStorage {
-
   /**
    * Constructor
    */
   constructor() {
-    const Cache = require('ezzy-cache');
+    const Cache = require("ezzy-cache");
     this._cache = new Cache();
   }
 
@@ -27,7 +26,7 @@ class MemoryStorage {
    * @param {string} key The key of the entry.
    * @returns {*}
    */
-  get (key) {
+  get(key) {
     const item = this.lib.get(key);
     if (!item) {
       return;
@@ -60,9 +59,9 @@ class MemoryStorage {
    * @param {string} key The name of the key.
    * @param {*} value The value of the cache entry.
    */
-  set (key, value) {
+  set(key, value) {
     const date = Date.now();
-    this.lib.add(key, {value, version, date});
+    this.lib.add(key, { value, version, date });
   }
 
   /**
@@ -105,7 +104,6 @@ class MemoryStorage {
       this.lib.remove(key);
     }
   }
-
 }
 
 module.exports = MemoryStorage;

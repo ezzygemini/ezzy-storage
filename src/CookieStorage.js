@@ -1,17 +1,16 @@
-const COOKIE_NAME = require('../package.json').name;
-const {version} = require('./package');
+const COOKIE_NAME = require("../package.json").name;
+const { version } = require("./package");
 
 /**
  * Cookie Storage
  */
 class CookieStorage {
-
   /**
    * Constructor.
    */
   constructor(win, prefix) {
     this._win = win;
-    this._cookie = COOKIE_NAME + (prefix || '');
+    this._cookie = COOKIE_NAME + (prefix || "");
   }
 
   /**
@@ -19,7 +18,7 @@ class CookieStorage {
    * @param {string} key The name of the cookie value.
    * @param {*} value The value of the storage object.
    */
-  set (key, value) {
+  set(key, value) {
     const date = Date.now();
     this.storage = Object.assign(this.storage, {
       [key]: {
@@ -35,7 +34,7 @@ class CookieStorage {
    * @param {string} key The name of the key.
    * @returns {*}
    */
-  get (key) {
+  get(key) {
     const item = this.storage[key];
     if (!item) {
       return;
@@ -70,7 +69,7 @@ class CookieStorage {
   delete(key) {
     const newStorage = this.storage;
     delete newStorage[key];
-    return this.storage = newStorage;
+    return (this.storage = newStorage);
   }
 
   /**
@@ -125,7 +124,7 @@ class CookieStorage {
    * @returns {Object}
    */
   get storage() {
-    const value = this.readCookie(this._cookie) || '{}';
+    const value = this.readCookie(this._cookie) || "{}";
     try {
       if (value) {
         return JSON.parse(decodeURIComponent(value));
@@ -153,10 +152,10 @@ class CookieStorage {
    */
   readCookie(name) {
     const nameEQ = name + "=";
-    const ca = this._win.document.cookie.split(';');
+    const ca = this._win.document.cookie.split(";");
     for (let i = 0; i < ca.length; i++) {
       let c = ca[i];
-      while (c.charAt(0) === ' ') {
+      while (c.charAt(0) === " ") {
         c = c.substring(1, c.length);
       }
       if (c.indexOf(nameEQ) === 0) {
@@ -176,7 +175,7 @@ class CookieStorage {
     let expires;
     if (days) {
       const date = new Date();
-      date.setTime(date.getTime() + (days * 86400000));
+      date.setTime(date.getTime() + days * 86400000);
       expires = "; expires=" + date.toGMTString();
     } else {
       expires = "";
@@ -191,8 +190,6 @@ class CookieStorage {
   eraseCookie(name) {
     this.createCookie(name, "", -1);
   }
-
 }
 
 module.exports = CookieStorage;
-
