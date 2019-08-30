@@ -19,7 +19,7 @@
   "license": "MIT",
   "dependencies": {
     "ezzy-cache": "^0.1.29",
-    "ezzy-logger": "^1.0.0"
+    "ezzy-logger": "^3.0.4"
   },
   "devDependencies": {
     "ezzy-testing": "^0.1.26"
